@@ -42,45 +42,14 @@ public class GameActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     if (count % 2 == 0) {
-                        if(btns.get(buttonIndex).getTag() == null){
-                            btns.get(buttonIndex).setBackgroundResource(R.drawable.x);
-                            btns.get(buttonIndex).setTag("x");
-                            if(checkWinner("x")){
-                                Intent intent = new Intent(GameActivity.this, ResultActivity.class);
-                                intent.putExtra("Result","Winner x: "+fname);
-                                startActivity(intent);
-                            }else{
-                                count++;
-                                changeName();
-                                checkTie();
-                            }
-                        }else{
-                            Toast.makeText(GameActivity.this,"Tag",Toast.LENGTH_SHORT).show();
-                        }
+                        changeImage(buttonIndex,"x");
                     } else {
-                        if(btns.get(buttonIndex).getTag() == null){
-                            btns.get(buttonIndex).setBackgroundResource(R.drawable.o);
-                            btns.get(buttonIndex).setTag("o");
-                            if(checkWinner("o")){
-                                Intent intent = new Intent(GameActivity.this, ResultActivity.class);
-                                intent.putExtra("Result","Winner o: "+fname);
-                                startActivity(intent);
-                            }else{
-                                count++;
-                                changeName();
-                                checkTie();
-                            }
-                        }else{
-                            Toast.makeText(GameActivity.this,"Tag",Toast.LENGTH_SHORT).show();
-                        }
+                        changeImage(buttonIndex,"o");
                     }
-
                 }
-
             });
         }
     }
-
     private void checkTie(){
         if(count==9){
             Intent intent = new Intent(GameActivity.this, ResultActivity.class);
@@ -88,16 +57,32 @@ public class GameActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
-
-    private void changeName(){
-        if(count%2==0){
-            binding.name.setText(fname);
-        }else{
-            binding.name.setText(sname);
+    private void changeImage(int buttonIndex, String symb){
+        if(btns.get(buttonIndex).getTag() == null){
+            if(symb.equals("x")){
+                btns.get(buttonIndex).setBackgroundResource(R.drawable.x);
+            }else{
+                btns.get(buttonIndex).setBackgroundResource(R.drawable.o);
+            }
+            btns.get(buttonIndex).setTag(symb);
+            if(checkWinner(symb)){
+                Intent intent = new Intent(GameActivity.this, ResultActivity.class);
+                intent.putExtra("Result","Winner "+symb+": "+fname);
+                startActivity(intent);
+            }else{
+                count++;
+                changeName();
+                checkTie();
+            }
         }
     }
-
+    private void changeName(){
+        if(count%2==0){
+            binding.name.setText("Move: "+fname);
+        }else{
+            binding.name.setText("Move: "+sname);
+        }
+    }
     private void addBtns(){
         btns.add(findViewById(R.id.num_1));
         btns.add(findViewById(R.id.num_2));
@@ -109,38 +94,29 @@ public class GameActivity extends AppCompatActivity {
         btns.add(findViewById(R.id.num_8));
         btns.add(findViewById(R.id.num_9));
     }
-
     private boolean checkWinner(String symb) {
-
         for (int i = 0; i < 3; i++) {
-
             if (btns.get(i * 3).getTag() == symb &&
                     btns.get(i * 3 + 1).getTag() == symb &&
                     btns.get(i * 3 + 2).getTag() == symb) {
                 return true;
             }
-
-
             if (btns.get(i).getTag() == symb &&
                     btns.get(i + 3).getTag() == symb &&
                     btns.get(i + 6).getTag() == symb) {
                 return true;
             }
         }
-
-
         if (btns.get(0).getTag() == symb &&
                 btns.get(4).getTag() == symb &&
                 btns.get(8).getTag() == symb) {
             return true;
         }
-
         if (btns.get(2).getTag() == symb &&
                 btns.get(4).getTag() == symb &&
                 btns.get(6).getTag() == symb) {
             return true;
         }
-
         return false;
     }
 }
